@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎂 Birthday Surprise</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #ff5cc8;
+    --purple: #9b5de5;
+    --blue: #4cc9f0;
+    --gold: #ffd166;
+    --dark: #0d0d1a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--dark);
+    color: white;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── Stars Canvas ─── */
+  #stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ─── App wrapper ─── */
+  #app {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  /* ─── Cards ─── */
+  .card {
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 48px 40px;
+    border-radius: 28px;
+    text-align: center;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+    animation: fadeIn 0.55s cubic-bezier(.22,1,.36,1);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px) scale(.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .hidden { display: none !important; }
+
+  /* ─── Typography ─── */
+  h1 {
+    font-size: 2.2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ff5cc8, #ffd166);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 14px;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 22px;
+    color: #f0e6ff;
+  }
+
+  p { color: rgba(255,255,255,0.65); margin-bottom: 24px; font-size: 1.05rem; }
+
+  /* ─── Buttons ─── */
+  .btn {
+    display: inline-block;
+    padding: 14px 32px;
+    margin: 8px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ff5cc8, #9b5de5);
+    color: white;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 6px 20px rgba(155,93,229,0.4);
+  }
+
+  .btn:hover {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 12px 30px rgba(155,93,229,0.5);
+  }
+
+  .btn.outline {
+    background: transparent;
+    border: 2px solid rgba(255,255,255,0.3);
+    box-shadow: none;
+  }
+
+  .btn.outline:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: #ff5cc8;
+  }
+
+  /* ─── Input ─── */
+  input[type="text"] {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 2px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.08);
+    color: white;
+    font-size: 1.05rem;
+    font-family: 'Tajawal', sans-serif;
+    outline: none;
+    margin-bottom: 18px;
+    transition: border-color 0.3s;
+    text-align: right;
+  }
+
+  input[type="text"]:focus { border-color: #ff5cc8; }
+  input[type="text"]::placeholder { color: rgba(255,255,255,0.35); }
+
+  /* ─── Inline Quiz Section ─── */
+  .question-block {
+    text-align: right;
+    margin-bottom: 20px;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .question-block p {
+    font-size: 1.1rem;
+    color: #f0e6ff;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+
+  .options-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 10px; }
+
+  .opt-btn {
+    padding: 10px 22px;
+    border-radius: 30px;
+    border: 2px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.06);
+    color: white;
+    cursor: pointer;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+
+  .opt-btn:hover, .opt-btn.selected {
+    background: linear-gradient(135deg, #ff5cc8, #9b5de5);
+    border-color: transparent;
+    transform: scale(1.05);
+  }
+
+  /* ─── Step Progress ─── */
+  .progress-bar {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-bottom: 28px;
+  }
+
+  .step-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: background 0.3s;
+  }
+
+  .step-dot.active { background: #ff5cc8; }
+  .step-dot.done   { background: #9b5de5; }
+
+  /* ─── NO button chase ─── */
+  #noBtn {
+    position: relative;
+    transition: none !important;
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.6);
+    padding: 14px 28px;
+    border-radius: 14px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 700;
+    margin: 8px;
+  }
+
+  /* ─── Powerpuff Cards ─── */
+  .ppg-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 10px;
+  }
+
+  .ppg-card {
+    border-radius: 20px;
+    padding: 20px 12px;
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ppg-card:hover {
+    transform: translateY(-6px) scale(1.04);
+  }
+
+  .ppg-card.blossom { background: linear-gradient(160deg, #ff6eb4, #c84b8a); box-shadow: 0 8px 30px rgba(255,110,180,0.35); }
+  .ppg-card.bubbles { background: linear-gradient(160deg, #5de0ff, #2196c9); box-shadow: 0 8px 30px rgba(93,224,255,0.35); }
+  .ppg-card.buttercup { background: linear-gradient(160deg, #6edb4f, #3a8c22); box-shadow: 0 8px 30px rgba(110,219,79,0.35); }
+
+  .ppg-card h3 { font-size: 0.9rem; font-weight: 700; margin-top: 10px; color: white; }
+  .ppg-card .tag { font-size: 0.72rem; opacity: 0.8; margin-top: 4px; }
+
+  /* SVG character */
+  .ppg-avatar { width: 80px; height: 80px; margin: 0 auto; }
+
+  /* ─── Character Reveal ─── */
+  .char-reveal {
+    animation: fadeIn 0.5s ease;
+  }
+
+  .char-big-avatar { width: 130px; height: 130px; margin: 0 auto 16px; }
+
+  .traits-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+  }
+
+  .trait-pill {
+    padding: 7px 16px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    animation: popIn 0.4s cubic-bezier(.22,1,.36,1) both;
+  }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.5); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  .blossom-pill { background: rgba(255,110,180,0.25); border: 1.5px solid #ff6eb4; color: #ffb3da; }
+  .bubbles-pill { background: rgba(93,224,255,0.2);  border: 1.5px solid #5de0ff; color: #b3f0ff; }
+  .buttercup-pill { background: rgba(110,219,79,0.2); border: 1.5px solid #6edb4f; color: #c4ffaa; }
+
+  /* ─── Cake Game ─── */
+  #cakeEmoji {
+    font-size: 56px;
+    display: inline-block;
+    cursor: pointer;
+    transition: transform 0.1s;
+    user-select: none;
+    filter: drop-shadow(0 0 20px rgba(255,200,0,0.5));
+  }
+
+  #cakeEmoji:hover { transform: scale(1.15) rotate(5deg); }
+
+  .catch-hint {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.45);
+    margin-top: 12px;
+  }
+
+  /* ─── Candles ─── */
+  .candles-row { display: flex; justify-content: center; gap: 14px; margin: 20px 0; }
+
+  .candle-wrap { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+
+  .flame {
+    font-size: 28px;
+    transition: all 0.3s;
+    filter: drop-shadow(0 0 8px orange);
+  }
+
+  .flame.out { opacity: 0.1; filter: none; }
+
+  .candle-body {
+    width: 14px; height: 50px;
+    background: linear-gradient(to bottom, #ffeaa7, #fdcb6e);
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(255,200,0,0.3);
+  }
+
+  /* ─── Gift ─── */
+  .gift-cards {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .gift-box {
+    width: 90px; height: 90px;
+    background: linear-gradient(135deg, rgba(255,92,200,0.2), rgba(155,93,229,0.2));
+    border: 2px solid rgba(255,92,200,0.4);
+    border-radius: 18px;
+    font-size: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .gift-box:hover {
+    transform: scale(1.12) rotate(-4deg);
+    box-shadow: 0 8px 30px rgba(255,92,200,0.4);
+    border-color: #ff5cc8;
+  }
+
+  /* ─── End ─── */
+  .end-emoji { font-size: 4rem; margin-bottom: 16px; animation: bounce 1s infinite alternate; }
+
+  @keyframes bounce {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-12px); }
+  }
+
+  #finalText {
+    font-size: 1.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ffd166, #ff5cc8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.5;
+  }
+
+  /* ─── Confetti ─── */
+  .confetto {
+    position: fixed;
+    width: 9px; height: 9px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Responsive */
+  @media(max-width:480px) {
+    .card { padding: 32px 22px; }
+    .ppg-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .ppg-card { padding: 14px 6px; }
+    .ppg-avatar { width: 60px; height: 60px; }
+  }
+
+  /* ─── Quiz ─── */
+  .quiz-step { animation: fadeIn 0.4s ease; }
+  .quiz-q {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #f0e6ff;
+    margin-bottom: 18px;
+    margin-top: 8px;
+  }
+  .quiz-opts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+  .quiz-opt {
+    padding: 11px 20px;
+    border-radius: 30px;
+    border: 2px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.06);
+    color: white;
+    cursor: pointer;
+    font-family: "Tajawal", sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+  .quiz-opt:hover { background: rgba(255,255,255,0.14); transform: scale(1.05); }
+  .quiz-opt.correct-sel {
+    background: linear-gradient(135deg,#6edb4f,#27ae60);
+    border-color: transparent;
+    box-shadow: 0 4px 18px rgba(110,219,79,0.4);
+  }
+  .quiz-opt.wrong-sel {
+    background: rgba(255,80,80,0.2);
+    border-color: rgba(255,80,80,0.5);
+    color: #ff9090;
+  }
+  .quiz-opt:disabled { cursor: default; transform: none !important; }
+  .quiz-feedback {
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 8px;
+    animation: fadeIn 0.3s ease;
+  }
+  .quiz-feedback.good { background: rgba(110,219,79,0.15); border: 1.5px solid rgba(110,219,79,0.4); color: #a8f080; }
+  .quiz-feedback.bad  { background: rgba(255,80,80,0.12);  border: 1.5px solid rgba(255,80,80,0.35); color: #ff9898; }
+</style>
+</head>
+<body>
+
+<audio id="bgMusic" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" loop></audio>
+
+<canvas id="stars"></canvas>
+
+<div id="app">
+
+  <!-- ① Start -->
+  <div id="start" class="card">
+    <div style="font-size:3.5rem;margin-bottom:12px;">🎉</div>
+    <h1>Birthday Detector</h1>
+    <p>تم اكتشاف عيد ميلاد اليوم — ابدأ المهمة</p>
+    <button class="btn" onclick="showCard('question')">ابدأ المهمة ✨</button>
+  </div>
+
+  <!-- ② Are you Lina? -->
+  <div id="question" class="card hidden">
+    <div class="progress-bar" id="pb1"></div>
+    <h2>انتي لينا؟ 🤨</h2>
+    <p>لازم نتأكد أول</p>
+    <div>
+      <button class="btn" onclick="yes()">نعم، أنا لينا 💖</button>
+      <button id="noBtn" onmousemove="runAway(event)">لا</button>
+    </div>
+  </div>
+
+  <!-- ③ Name -->
+  <div id="namePage" class="card hidden">
+    <div class="progress-bar" id="pb2"></div>
+    <h2>شو اسمك الحقيقي؟ ✍️</h2>
+    <input type="text" id="nameInput" placeholder="اكتبي اسمك هنا...">
+    <div id="nameError" style="display:none;margin:10px 0;padding:14px 18px;border-radius:14px;background:rgba(255,80,80,0.15);border:1.5px solid rgba(255,80,80,0.4);animation:fadeIn 0.3s ease;">
+      <div style="font-size:1.5rem;margin-bottom:6px;">🤥</div>
+      <div id="nameErrorMsg" style="font-weight:700;color:#ff8080;font-size:1rem;"></div>
+    </div>
+    <br>
+    <button class="btn" onclick="saveName()">التالي 🌟</button>
+  </div>
+
+  <!-- ④ Powerpuff pick -->
+  <div id="powerpuff" class="card hidden" style="max-width:560px">
+    <div class="progress-bar" id="pb3"></div>
+    <h2>أي شخصية تشبهك أكثر؟ 💫</h2>
+
+    <!-- Character cards -->
+    <div class="ppg-grid" id="ppgGrid">
+
+      <!-- Blossom -->
+      <div class="ppg-card blossom" onclick="choosePPG('blossom')">
+        <svg class="ppg-avatar" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <!-- Hair back -->
+          <ellipse cx="50" cy="72" rx="26" ry="34" fill="#c0392b"/>
+          <!-- Head -->
+          <circle cx="50" cy="50" r="34" fill="#fde8d0"/>
+          <!-- Bow -->
+          <polygon points="50,8 38,22 50,20 62,22" fill="#e74c3c"/>
+          <ellipse cx="44" cy="14" rx="8" ry="6" fill="#e74c3c" transform="rotate(-20,44,14)"/>
+          <ellipse cx="56" cy="14" rx="8" ry="6" fill="#e74c3c" transform="rotate(20,56,14)"/>
+          <circle cx="50" cy="16" r="4" fill="#c0392b"/>
+          <!-- Eyes -->
+          <ellipse cx="37" cy="48" rx="9" ry="11" fill="#222"/>
+          <ellipse cx="63" cy="48" rx="9" ry="11" fill="#222"/>
+          <circle cx="40" cy="45" r="3.5" fill="white"/>
+          <circle cx="66" cy="45" r="3.5" fill="white"/>
+          <!-- Blush -->
+          <ellipse cx="28" cy="58" rx="7" ry="4" fill="#f1948a" opacity=".5"/>
+          <ellipse cx="72" cy="58" rx="7" ry="4" fill="#f1948a" opacity=".5"/>
+          <!-- Smile -->
+          <path d="M40,65 Q50,74 60,65" stroke="#c0392b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        </svg>
+        <h3>Blossom</h3>
+        <div class="tag">القائدة 👑</div>
+      </div>
+
+      <!-- Bubbles -->
+      <div class="ppg-card bubbles" onclick="choosePPG('bubbles')">
+        <svg class="ppg-avatar" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <!-- Pigtails -->
+          <circle cx="18" cy="48" r="12" fill="#f1c40f"/>
+          <circle cx="82" cy="48" r="12" fill="#f1c40f"/>
+          <!-- Hair band lines -->
+          <line x1="24" y1="38" x2="30" y2="40" stroke="#f39c12" stroke-width="2"/>
+          <line x1="70" y1="40" x2="76" y2="38" stroke="#f39c12" stroke-width="2"/>
+          <!-- Head -->
+          <circle cx="50" cy="50" r="34" fill="#fde8d0"/>
+          <!-- Hair top -->
+          <ellipse cx="50" cy="22" rx="28" ry="16" fill="#f1c40f"/>
+          <!-- Eyes -->
+          <ellipse cx="37" cy="48" rx="9" ry="12" fill="#222"/>
+          <ellipse cx="63" cy="48" rx="9" ry="12" fill="#222"/>
+          <circle cx="40" cy="44" r="3.5" fill="white"/>
+          <circle cx="66" cy="44" r="3.5" fill="white"/>
+          <!-- Blush -->
+          <ellipse cx="27" cy="58" rx="7" ry="4" fill="#f1948a" opacity=".5"/>
+          <ellipse cx="73" cy="58" rx="7" ry="4" fill="#f1948a" opacity=".5"/>
+          <!-- Smile open -->
+          <path d="M39,65 Q50,76 61,65" stroke="#c0392b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        </svg>
+        <h3>Bubbles</h3>
+        <div class="tag">اللطيفة 🌸</div>
+      </div>
+
+      <!-- Buttercup -->
+      <div class="ppg-card buttercup" onclick="choosePPG('buttercup')">
+        <svg class="ppg-avatar" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <!-- Hair -->
+          <ellipse cx="50" cy="26" rx="32" ry="18" fill="#2c3e50"/>
+          <!-- Side flicks -->
+          <path d="M18,40 Q12,28 22,20" stroke="#2c3e50" stroke-width="8" fill="none" stroke-linecap="round"/>
+          <path d="M82,40 Q88,28 78,20" stroke="#2c3e50" stroke-width="8" fill="none" stroke-linecap="round"/>
+          <!-- Head -->
+          <circle cx="50" cy="52" r="34" fill="#fde8d0"/>
+          <!-- Eyes (fiercer) -->
+          <ellipse cx="37" cy="48" rx="9" ry="10" fill="#222"/>
+          <ellipse cx="63" cy="48" rx="9" ry="10" fill="#222"/>
+          <circle cx="40" cy="45" r="3.5" fill="white"/>
+          <circle cx="66" cy="45" r="3.5" fill="white"/>
+          <!-- Eyebrows -->
+          <path d="M28,37 Q37,33 44,36" stroke="#2c3e50" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M56,36 Q63,33 72,37" stroke="#2c3e50" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <!-- Blush -->
+          <ellipse cx="27" cy="59" rx="7" ry="4" fill="#f1948a" opacity=".4"/>
+          <ellipse cx="73" cy="59" rx="7" ry="4" fill="#f1948a" opacity=".4"/>
+          <!-- Smirk -->
+          <path d="M42,67 Q52,73 62,67" stroke="#c0392b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        </svg>
+        <h3>Buttercup</h3>
+        <div class="tag">القوية 💪</div>
+      </div>
+    </div>
+
+    <!-- Character Reveal (hidden until selected) -->
+    <div id="charReveal" class="char-reveal hidden" style="margin-top:28px;">
+      <div id="charBigAvatar" class="char-big-avatar"></div>
+      <h2 id="charName" style="margin-bottom:6px;font-size:1.3rem;"></h2>
+      <p id="charDesc" style="font-size:0.95rem;color:rgba(255,255,255,0.75);margin-bottom:4px;"></p>
+      <div class="traits-grid" id="traitsGrid"></div>
+      <button class="btn" style="margin-top:24px;" onclick="showCard('quiz')">التالي 🧠</button>
+    </div>
+  </div>
+
+  <!-- ⑤ Quiz -->
+  <div id="quiz" class="card hidden" style="max-width:540px">
+    <div class="progress-bar" id="pb_quiz"></div>
+
+    <div id="q1" class="quiz-step">
+      <h2>اختبار سريع 🧠</h2>
+      <p>شوفي قد ايش نعرفك 👀</p>
+      <div class="quiz-q">ايش مسلسلك المفضل؟ 📺</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="answerQ(1,'wrong',this)">Breaking Bad</button>
+        <button class="quiz-opt" onclick="answerQ(1,'correct',this)">Stranger Things 🔮</button>
+        <button class="quiz-opt" onclick="answerQ(1,'wrong',this)">Friends</button>
+        <button class="quiz-opt" onclick="answerQ(1,'wrong',this)">Game of Thrones</button>
+      </div>
+      <div class="quiz-feedback hidden" id="fb1"></div>
+    </div>
+
+    <div id="q2" class="quiz-step hidden">
+      <div class="quiz-q">اي نادي تشجعين؟ ⚽</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="answerQ(2,'wrong',this)">ريال مدريد 🤍</button>
+        <button class="quiz-opt" onclick="answerQ(2,'correct',this)">برشلونة 🔵🔴</button>
+        <button class="quiz-opt" onclick="answerQ(2,'wrong',this)">مانشستر يونايتد</button>
+        <button class="quiz-opt" onclick="answerQ(2,'wrong',this)">ليفربول</button>
+      </div>
+      <div class="quiz-feedback hidden" id="fb2"></div>
+    </div>
+
+    <div id="q3" class="quiz-step hidden">
+      <div class="quiz-q">لو كنتِ شخصية خيالية مين تكونين؟ ✨</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="answerQ(3,'any',this)">Hermione 📚</button>
+        <button class="quiz-opt" onclick="answerQ(3,'any',this)">Eleven 🔮</button>
+        <button class="quiz-opt" onclick="answerQ(3,'any',this)">Rory Gilmore ☕</button>
+        <button class="quiz-opt" onclick="answerQ(3,'any',this)">Wonder Woman 🦸‍♀️</button>
+      </div>
+      <div class="quiz-feedback hidden" id="fb3"></div>
+    </div>
+
+    <div id="quizResult" class="hidden" style="margin-top:24px;animation:fadeIn 0.5s ease;text-align:center;">
+      <div style="font-size:2.8rem;margin-bottom:12px;">🏆</div>
+      <div id="quizScore" style="font-size:1.15rem;font-weight:700;color:#ffd166;margin-bottom:20px;line-height:1.6;"></div>
+      <button class="btn" onclick="showCard('game')">التالي 🎂</button>
+    </div>
+  </div>
+
+  <!-- ⑥ Catch the cake -->
+  <div id="game" class="card hidden">
+    <div class="progress-bar" id="pb4"></div>
+    <h2>امسكي الكيكة 🎂</h2>
+    <div style="position:relative;height:200px;display:flex;align-items:center;justify-content:center;">
+      <span id="cakeEmoji" onclick="caughtCake()">🎂</span>
+    </div>
+    <p class="catch-hint">حاولي تمسكيها وهي تهرب 😂</p>
+  </div>
+
+  <!-- ⑥ Blow candles -->
+  <div id="candles" class="card hidden">
+    <div class="progress-bar" id="pb5"></div>
+    <h2>تمني أمنية وأطفي الشموع 🕯️</h2>
+    <p>اضغطي على كل شمعة لإطفائها</p>
+    <div class="candles-row" id="candlesRow">
+      <div class="candle-wrap" onclick="blowCandle(0)">
+        <span class="flame" id="f0">🔥</span>
+        <div class="candle-body"></div>
+      </div>
+      <div class="candle-wrap" onclick="blowCandle(1)">
+        <span class="flame" id="f1">🔥</span>
+        <div class="candle-body"></div>
+      </div>
+      <div class="candle-wrap" onclick="blowCandle(2)">
+        <span class="flame" id="f2">🔥</span>
+        <div class="candle-body"></div>
+      </div>
+      <div class="candle-wrap" onclick="blowCandle(3)">
+        <span class="flame" id="f3">🔥</span>
+        <div class="candle-body"></div>
+      </div>
+      <div class="candle-wrap" onclick="blowCandle(4)">
+        <span class="flame" id="f4">🔥</span>
+        <div class="candle-body"></div>
+      </div>
+    </div>
+    <p id="candleStatus" style="min-height:24px;color:#ffd166;font-weight:700;"></p>
+  </div>
+
+  <!-- ⑦ Gift -->
+  <div id="gift" class="card hidden">
+    <div class="progress-bar" id="pb6"></div>
+    <h2>اختاري صندوق المفاجأة 🎁</h2>
+    <p>واحدة منهم فيها مفاجأة حلوة ✨</p>
+    <div class="gift-cards">
+      <div class="gift-box" onclick="openGift(this)">🎁</div>
+      <div class="gift-box" onclick="openGift(this)">🎁</div>
+      <div class="gift-box" onclick="openGift(this)">🎁</div>
+    </div>
+    <p id="giftHint" style="min-height:24px;color:#ffd166;font-weight:700;margin-top:16px;"></p>
+  </div>
+
+  <!-- ⑧ End -->
+  <div id="end" class="card hidden">
+    <div class="end-emoji">🎊</div>
+    <h1 id="finalText"></h1>
+    <p id="finalSub" style="margin-top:14px;font-size:1rem;color:rgba(255,255,255,0.6);"></p>
+    <button class="btn" style="margin-top:20px;" onclick="restart()">🔁 من البداية</button>
+  </div>
+
+</div>
+
+<script>
+// ─── State ───────────────────────────────
+let userName = '';
+let candlesOut = 0;
+const TOTAL_CANDLES = 5;
+
+// ─── Stars ───────────────────────────────
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  generateStars();
+});
+
+let stars = [];
+function generateStars() {
+  stars = Array.from({length: 140}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 1.8 + 0.3,
+    a: Math.random(),
+    da: (Math.random() - 0.5) * 0.008
+  }));
+}
+generateStars();
+
+function drawStars() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  stars.forEach(s => {
+    s.a = Math.max(0.1, Math.min(1, s.a + s.da));
+    if (s.a <= 0.1 || s.a >= 1) s.da *= -1;
+    ctx.globalAlpha = s.a;
+    ctx.fillStyle = 'white';
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(drawStars);
+}
+drawStars();
+
+// ─── Progress Dots ────────────────────────
+const STEPS = ['pb1','pb2','pb3','pb4','pb5','pb6'];
+function updateProgress(current) {
+  STEPS.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = '';
+    STEPS.forEach((_, j) => {
+      const d = document.createElement('div');
+      d.className = 'step-dot' + (j < i ? ' done' : j === i ? ' active' : '');
+      el.appendChild(d);
+    });
+  });
+}
+
+// ─── Music ───────────────────────────────
+const music = document.getElementById('bgMusic');
+
+// ─── Show Card ────────────────────────────
+function showCard(id) {
+  document.querySelectorAll('.card').forEach(c => c.classList.add('hidden'));
+  const el = document.getElementById(id);
+  el.classList.remove('hidden');
+  const idx = ['start','question','namePage','powerpuff','quiz','game','candles','gift','end'].indexOf(id);
+  if (idx > 0 && idx <= 6) updateProgress(idx - 1);
+
+  // تشغيل الموسيقى لما تظهر الرسالة النهائية وتستمر للأبد
+  if (id === 'end') {
+    music.currentTime = 0;
+    music.play().catch(() => {});
+  }
+}
+
+// ─── Start ────────────────────────────────
+function start() { showCard('question'); }
+
+// ─── No button escape ─────────────────────
+const noBtn = document.getElementById('noBtn');
+let noClicks = 0;
+noBtn.addEventListener('mousemove', (e) => {
+  const card = document.getElementById('question');
+  const rect = card.getBoundingClientRect();
+  const bw = noBtn.offsetWidth, bh = noBtn.offsetHeight;
+  let nx = Math.random() * (rect.width  - bw - 20) + 10;
+  let ny = Math.random() * (rect.height - bh - 20) + 10;
+  noBtn.style.position = 'absolute';
+  noBtn.style.left = nx + 'px';
+  noBtn.style.top  = ny + 'px';
+});
+noBtn.addEventListener('click', () => {
+  noClicks++;
+  noBtn.textContent = ['لا!', 'ما أصدق 😤', 'فكري تاني 🤔', 'أكيد أنتِ لينا 👀'][Math.min(noClicks - 1, 3)];
+});
+
+// ─── Yes ──────────────────────────────────
+function yes() {
+  confetti();
+  showCard('namePage');
+  noBtn.style.position = '';
+  noBtn.style.left = '';
+  noBtn.style.top  = '';
+}
+
+// ─── Save Name ───────────────────────────
+const funnyMsgs = [
+  'كذاب! انتِ مش هيك اسمك 😂',
+  'حاولي تاني، ما اقتنعت 🤨',
+  'يعني بتكذبين عليّ؟! 😤',
+  'الاسم غلط، جربي مرة ثانية 👀',
+  'هممم... مش مقتنعة 🧐',
+];
+let wrongTries = 0;
+
+function saveName() {
+  const v = document.getElementById('nameInput').value.trim();
+  const errorBox = document.getElementById('nameError');
+  const errorMsg = document.getElementById('nameErrorMsg');
+  const input    = document.getElementById('nameInput');
+
+  if (v === 'نجوان') {
+    userName = 'نجوان';
+    errorBox.style.display = 'none';
+    input.style.borderColor = '';
+    showCard('powerpuff');
+  } else {
+    // Wrong name
+    wrongTries++;
+    const msg = funnyMsgs[Math.min(wrongTries - 1, funnyMsgs.length - 1)];
+    errorMsg.textContent = msg;
+    errorBox.style.display = 'block';
+    input.style.borderColor = '#ff5050';
+    // Shake input
+    input.animate([
+      {transform:'translateX(0)'},
+      {transform:'translateX(-8px)'},
+      {transform:'translateX(8px)'},
+      {transform:'translateX(-6px)'},
+      {transform:'translateX(6px)'},
+      {transform:'translateX(0)'}
+    ], {duration: 400, easing:'ease'});
+  }
+}
+
+// ─── Powerpuff Data ──────────────────────
+const PPG = {
+  blossom: {
+    name: 'Blossom 🌸',
+    desc: 'القائدة الذكية المنظمة — تحبي إن كل شيء يكون بالترتيب',
+    traits: ['قائدة طبيعية','ذكية جداً','منظمة','تحب القراءة','مسؤولة','تخطط لكل شي'],
+    pill: 'blossom-pill',
+    color: '#ff6eb4'
+  },
+  bubbles: {
+    name: 'Bubbles 💙',
+    desc: 'القلب الحنون — طيبة وحنونة وتحبي تساعدي الكل',
+    traits: ['حنونة جداً','فنانة موهوبة','تحب الحيوانات','مرحة','تتكلم أكثر من لغة','عاطفية'],
+    pill: 'bubbles-pill',
+    color: '#5de0ff'
+  },
+  buttercup: {
+    name: 'Buttercup 💚',
+    desc: 'المقاتلة الشجاعة — ما تستسلمي وتقولي الحق دايماً',
+    traits: ['شجاعة','مباشرة وصريحة','ما تستسلم','تحب التحديات','قوية','تحمي اللي تحبيهم'],
+    pill: 'buttercup-pill',
+    color: '#6edb4f'
+  }
+};
+
+// Big SVGs for reveal
+const bigSVGs = {
+  blossom: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="50" cy="75" rx="28" ry="30" fill="#c0392b"/>
+    <circle cx="50" cy="50" r="36" fill="#fde8d0"/>
+    <polygon points="50,6 36,22 50,19 64,22" fill="#e74c3c"/>
+    <ellipse cx="42" cy="12" rx="10" ry="7" fill="#e74c3c" transform="rotate(-20,42,12)"/>
+    <ellipse cx="58" cy="12" rx="10" ry="7" fill="#e74c3c" transform="rotate(20,58,12)"/>
+    <circle cx="50" cy="15" r="5" fill="#c0392b"/>
+    <ellipse cx="36" cy="48" rx="10" ry="12" fill="#222"/>
+    <ellipse cx="64" cy="48" rx="10" ry="12" fill="#222"/>
+    <circle cx="40" cy="44" r="4" fill="white"/>
+    <circle cx="68" cy="44" r="4" fill="white"/>
+    <ellipse cx="26" cy="59" rx="8" ry="5" fill="#f1948a" opacity=".5"/>
+    <ellipse cx="74" cy="59" rx="8" ry="5" fill="#f1948a" opacity=".5"/>
+    <path d="M38,66 Q50,76 62,66" stroke="#c0392b" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </svg>`,
+  bubbles: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="15" cy="50" r="14" fill="#f1c40f"/>
+    <circle cx="85" cy="50" r="14" fill="#f1c40f"/>
+    <circle cx="50" cy="50" r="36" fill="#fde8d0"/>
+    <ellipse cx="50" cy="20" rx="30" ry="18" fill="#f1c40f"/>
+    <ellipse cx="36" cy="48" rx="10" ry="13" fill="#222"/>
+    <ellipse cx="64" cy="48" rx="10" ry="13" fill="#222"/>
+    <circle cx="40" cy="43" r="4" fill="white"/>
+    <circle cx="68" cy="43" r="4" fill="white"/>
+    <ellipse cx="25" cy="60" rx="8" ry="5" fill="#f1948a" opacity=".5"/>
+    <ellipse cx="75" cy="60" rx="8" ry="5" fill="#f1948a" opacity=".5"/>
+    <path d="M37,67 Q50,79 63,67" stroke="#c0392b" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </svg>`,
+  buttercup: `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="50" cy="25" rx="34" ry="19" fill="#2c3e50"/>
+    <path d="M16,44 Q8,28 20,18" stroke="#2c3e50" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <path d="M84,44 Q92,28 80,18" stroke="#2c3e50" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <circle cx="50" cy="53" r="36" fill="#fde8d0"/>
+    <ellipse cx="36" cy="50" rx="10" ry="11" fill="#222"/>
+    <ellipse cx="64" cy="50" rx="10" ry="11" fill="#222"/>
+    <circle cx="40" cy="46" r="4" fill="white"/>
+    <circle cx="68" cy="46" r="4" fill="white"/>
+    <path d="M26,38 Q36,33 44,37" stroke="#2c3e50" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M56,37 Q64,33 74,38" stroke="#2c3e50" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="26" cy="62" rx="8" ry="5" fill="#f1948a" opacity=".4"/>
+    <ellipse cx="74" cy="62" rx="8" ry="5" fill="#f1948a" opacity=".4"/>
+    <path d="M40,69 Q50,76 60,69" stroke="#c0392b" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </svg>`
+};
+
+function choosePPG(char) {
+  // Highlight selected card
+  document.querySelectorAll('.ppg-card').forEach(c => c.style.opacity = '0.45');
+  event.currentTarget.style.opacity = '1';
+  event.currentTarget.style.transform = 'scale(1.06)';
+  event.currentTarget.style.border = '2px solid white';
+
+  const d = PPG[char];
+  document.getElementById('charBigAvatar').innerHTML = bigSVGs[char];
+  document.getElementById('charName').textContent = d.name;
+  document.getElementById('charDesc').textContent = d.desc;
+
+  const tg = document.getElementById('traitsGrid');
+  tg.innerHTML = '';
+  d.traits.forEach((t, i) => {
+    const pill = document.createElement('div');
+    pill.className = 'trait-pill ' + d.pill;
+    pill.textContent = t;
+    pill.style.animationDelay = (i * 0.07) + 's';
+    tg.appendChild(pill);
+  });
+
+  document.getElementById('charReveal').classList.remove('hidden');
+  document.getElementById('charReveal').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+}
+
+
+// ─── Quiz Logic ──────────────────────────
+let quizScore = 0;
+const TOTAL_Q = 3;
+
+const wrongMsgs = {
+  1: ['حاولي تاني 😂', 'Stranger Things وين راحت؟ 👀', 'مش هيك قالوا علينا 🤨'],
+  2: ['ريال؟ لا لا مش ممكن 😤', 'فكري كويس كويس 🤔', 'برشلونة بتستنى ⏳'],
+};
+
+const correctMsgs = {
+  1: '✅ صح! Stranger Things طبعاً، ذوقك يُحترم 🔮',
+  2: '✅ برشلونة! Visca el Barça 🔵🔴🔥',
+};
+
+const anyMsgs = {
+  'Hermione 📚': '📚 ذكية وتحبي الكتب، منطقي!',
+  'Eleven 🔮': '🔮 قوية وعندك طاقة مختلفة!',
+  'Rory Gilmore ☕': '☕ شاطرة وعندك أهداف كبيرة!',
+  'Wonder Woman 🦸‍♀️': '🦸‍♀️ شجاعة وتحمي اللي حولك!',
+};
+
+let wrongAttempts = { 1: 0, 2: 0 };
+
+function answerQ(qNum, type, btn) {
+  const opts = btn.closest('.quiz-opts').querySelectorAll('.quiz-opt');
+  const fb   = document.getElementById('fb' + qNum);
+
+  // Disable all buttons
+  opts.forEach(b => b.disabled = true);
+
+  if (type === 'correct') {
+    btn.classList.add('correct-sel');
+    fb.textContent = correctMsgs[qNum];
+    fb.className = 'quiz-feedback good';
+    quizScore++;
+    setTimeout(() => nextQ(qNum), 1400);
+
+  } else if (type === 'wrong') {
+    btn.classList.add('wrong-sel');
+    wrongAttempts[qNum] = (wrongAttempts[qNum] || 0) + 1;
+    const msgs = wrongMsgs[qNum];
+    fb.textContent = msgs[Math.min(wrongAttempts[qNum] - 1, msgs.length - 1)];
+    fb.className = 'quiz-feedback bad';
+    // Re-enable after short delay
+    setTimeout(() => {
+      opts.forEach(b => { b.disabled = false; btn.classList.remove('wrong-sel'); });
+    }, 900);
+
+  } else {
+    // 'any' — opinion question, all answers ok
+    btn.classList.add('correct-sel');
+    fb.textContent = anyMsgs[btn.textContent.trim()] || '💫 اختيار حلو!';
+    fb.className = 'quiz-feedback good';
+    setTimeout(() => nextQ(qNum), 1400);
+  }
+
+  fb.classList.remove('hidden');
+}
+
+function nextQ(current) {
+  document.getElementById('q' + current).classList.add('hidden');
+  const next = current + 1;
+  if (next <= TOTAL_Q) {
+    document.getElementById('q' + next).classList.remove('hidden');
+  } else {
+    // Show result
+    let scoreText = '';
+    if (quizScore >= 2) {
+      scoreText = `${userName}، واضح نعرفك زين 😄\nصح على Stranger Things وبرشلونة 🔵🔴🔮\nذوقك من الأحلى! 💫`;
+    } else {
+      scoreText = `${userName}، حاولنا نعرفك 😂\nبس ذوقك مميز بطريقتها 💜`;
+    }
+    document.getElementById('quizScore').innerText = scoreText;
+    document.getElementById('quizResult').classList.remove('hidden');
+  }
+}
+
+// ─── Catch the Cake ──────────────────────
+const cakeEl = document.getElementById('cakeEmoji');
+let cakeInterval;
+
+document.getElementById('game').addEventListener('click', () => {}, false);
+
+function startCakeGame() {
+  clearInterval(cakeInterval);
+  cakeEl.style.transform = '';
+  cakeEl.style.left = '';
+  cakeEl.style.top  = '';
+  const container = cakeEl.parentElement;
+  cakeInterval = setInterval(() => {
+    const cw = container.clientWidth  - 80;
+    const ch = container.clientHeight - 80;
+    cakeEl.style.position = 'absolute';
+    cakeEl.style.left = (10 + Math.random() * cw) + 'px';
+    cakeEl.style.top  = (10 + Math.random() * ch) + 'px';
+    cakeEl.style.transition = 'left 0.4s ease, top 0.4s ease';
+  }, 700);
+}
+
+function caughtCake() {
+  clearInterval(cakeInterval);
+  cakeEl.style.transform = 'scale(1.4)';
+  setTimeout(() => showCard('candles'), 600);
+}
+
+// Restart cake game when shown
+const observer = new MutationObserver(() => {
+  if (!document.getElementById('game').classList.contains('hidden')) {
+    startCakeGame();
+  }
+});
+observer.observe(document.getElementById('game'), {attributes: true, attributeFilter: ['class']});
+
+// ─── Candles ──────────────────────────────
+function blowCandle(i) {
+  const f = document.getElementById('f' + i);
+  if (f.classList.contains('out')) return;
+  f.textContent = '💨';
+  f.classList.add('out');
+  candlesOut++;
+  if (candlesOut >= TOTAL_CANDLES) {
+    document.getElementById('candleStatus').textContent = '🎉 كل الشموع اتطفت! أمنيتك راح تتحقق 💫';
+    setTimeout(() => { candlesOut = 0; showCard('gift'); }, 1500);
+  } else {
+    document.getElementById('candleStatus').textContent = `باقي ${TOTAL_CANDLES - candlesOut} شموع ✨`;
+  }
+}
+
+// ─── Gift ─────────────────────────────────
+function openGift(el) {
+  document.querySelectorAll('.gift-box').forEach(g => {
+    g.style.pointerEvents = 'none';
+    g.style.opacity = '0.4';
+  });
+  el.style.opacity = '1';
+  el.textContent = '🎀';
+  el.style.transform = 'scale(1.3) rotate(10deg)';
+  el.style.boxShadow = '0 0 40px rgba(255,92,200,0.7)';
+  document.getElementById('giftHint').textContent = '🎊 اخترتِ الصندوق المميز!';
+  confetti();
+  setTimeout(() => showEnd(), 1800);
+}
+
+// ─── End ──────────────────────────────────
+function showEnd() {
+  showCard('end');
+  confetti();
+  confetti();
+  document.getElementById('finalText').textContent = `كل سنة وانتِ طيبة ${userName} 🎉`;
+  document.getElementById('finalSub').textContent = 'عقبال ما تبلغي كل أحلامك وتكوني أسعد واحدة 💖';
+}
+
+function restart() {
+  candlesOut = 0;
+  userName = '';
+  document.getElementById('nameInput').value = '';
+  document.querySelectorAll('.flame').forEach(f => { f.textContent = '🔥'; f.classList.remove('out'); });
+  document.querySelectorAll('.gift-box').forEach(g => { g.textContent = '🎁'; g.style.opacity='1'; g.style.pointerEvents=''; g.style.transform=''; g.style.boxShadow=''; });
+  document.getElementById('giftHint').textContent = '';
+  document.getElementById('candleStatus').textContent = '';
+  document.getElementById('charReveal').classList.add('hidden');
+  quizScore = 0; wrongAttempts = {1:0,2:0};
+  [1,2,3].forEach(n => { const s = document.getElementById('q'+n); if(s){ s.classList.remove('hidden'); s.querySelectorAll('.quiz-opt').forEach(b=>{ b.disabled=false; b.className='quiz-opt'; }); document.getElementById('fb'+n).classList.add('hidden'); }});
+  if(n===2||n===3) document.getElementById('q'+n).classList.add('hidden');
+  document.getElementById('q1').classList.remove('hidden'); document.getElementById('q2').classList.add('hidden'); document.getElementById('q3').classList.add('hidden'); document.getElementById('quizResult').classList.add('hidden');
+  document.querySelectorAll('.ppg-card').forEach(c => { c.style.opacity='1'; c.style.transform=''; c.style.border=''; });
+  noBtn.style.position=''; noBtn.style.left=''; noBtn.style.top=''; noBtn.textContent='لا';
+  showCard('start');
+}
+
+// ─── Confetti ────────────────────────────
+function confetti() {
+  for (let i = 0; i < 90; i++) {
+    setTimeout(() => {
+      const d = document.createElement('div');
+      d.className = 'confetto';
+      d.style.cssText = `
+        left:${Math.random()*100}vw;
+        top:-10px;
+        background:hsl(${Math.random()*360},100%,60%);
+        border-radius:${Math.random()>0.5?'50%':'2px'};
+        opacity:0.9;
+      `;
+      document.body.appendChild(d);
+      d.animate([
+        {transform:`translateY(0) rotate(0deg)`, opacity: 0.9},
+        {transform:`translateY(${80+Math.random()*20}vh) rotate(${Math.random()*720}deg)`, opacity: 0}
+      ], {
+        duration: 2000 + Math.random() * 2000,
+        easing: 'cubic-bezier(.25,.46,.45,.94)'
+      }).onfinish = () => d.remove();
+    }, i * 20);
+  }
+}
+</script>
+</body>
+</html>
